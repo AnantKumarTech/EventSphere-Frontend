@@ -6,6 +6,7 @@ import {
   Bookmark,
   User,
   Search,
+  Menu,
 } from "lucide-react";
 
 function Navbar() {
@@ -62,24 +63,26 @@ function Navbar() {
             </Link>
           </div>
 
-          {/* Right Side: Search + Buttons */}
+          {/* Right Side: Search + Menu + Buttons */}
           <div className="flex items-center gap-2">
-            {/* Search Icon - Mobile Only */}
-            <button className="sm:hidden p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-500">
+            {/* Hamburger Menu - Mobile Only */}
+            <button className="md:hidden p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-600 hover:bg-gray-200 transition">
+              <Menu className="w-5 h-5" />
+            </button>
+            {/* Search Icon - Tablet Only */}
+            <button className="hidden sm:flex lg:hidden items-center justify-center p-2 rounded-xl bg-gray-100 border border-gray-200 text-gray-500 hover:bg-gray-200 transition">
               <Search className="w-5 h-5" />
             </button>
-
-            {/* Full Search Bar - Tablet and Desktop */}
-            <div className="hidden sm:flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-xl px-3 w-32 h-10 focus-within:ring-2 focus-within:ring-red-200 transition">
+            {/* Search Bar - Laptop and Desktop Only */}
+            <div className="hidden lg:flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-xl px-3 w-40 lg:w-56 xl:w-72 h-10">
               <Search className="w-4 h-4 text-gray-400 shrink-0" />
               <input
                 type="text"
-                placeholder="Search..."
-                className="w-full min-w-0 bg-transparent outline-none text-sm placeholder:text-gray-400"
+                placeholder="Search events..."
+                className="w-full min-w-0 bg-transparent outline-none text-sm"
               />
             </div>
-
-            {/* Host Event + Coming Soon */}
+            {/* Host Event + Coming Soon - Laptop Only */}
             <div className="hidden lg:flex items-center gap-2">
               <button
                 disabled
