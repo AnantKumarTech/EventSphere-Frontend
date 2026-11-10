@@ -1,11 +1,34 @@
 import FeaturedCarousel from "@/component/FeaturedCarousel";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Compass, Flame, Sparkles } from "lucide-react";
-import { React, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import axios from "axios";
 
 function Home() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [featureEvents, setFeatureEvent] = useState([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const {
+          data: { data },
+        } = await axios.get(
+          "https://eventsphere-server-mfdb.onrender.com/api/events",
+        );
+        setFeatureEvent(data);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+
   return (
     <div className="space-y-16 pb-20">
       <section className="relative pt-12 pb-6 sm:pt-16 sm:pb-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,9 +88,9 @@ function Home() {
         </div>
 
         {isLoading ? (
-          <div className="aspect-21/9 rounded-3xl bg-[#EBE8DF]/50 animate-pulse"></div>
+          <div className="aspect-21/9 rounded-3xl bg-[#EBE8DF]/50 animate-pulse">loading...</div>
         ) : (
-          <FeaturedCarousel/>
+          <FeaturedCarousel events={featureEvents} />
         )}
       </section>
     </div>
