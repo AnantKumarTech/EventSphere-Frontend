@@ -1,5 +1,5 @@
 export { cn } from "cn";
-import { format, parseISO, isValid } from "date-fns";
+import { format, parseISO, isValid, formatDistanceToNow } from "date-fns";
 
 export function formatPrice(amount, currency = "INR") {
   const value = Number(amount);
@@ -14,11 +14,29 @@ export function formatPrice(amount, currency = "INR") {
 }
 
 export function formatEventDate(dateInput) {
-  if (!dateInput || typeof dateInput !== "string") return "Date TBD";
+  if (!dateInput) return;
 
   const date = parseISO(dateInput);
 
-  if (!isValid(date)) return "Date TBD";
-
   return format(date, "EEE, MMM dd, yyyy");
+}
+
+export function formatEventTimeRange(startDate, endDate) {
+  if (!startDate || !endDate) return;
+  const start = parseISO(startDate);
+  const startTime = format(start, "h:m a");
+  const end = parseISO(startDate);
+  const endTime = format(end, "h:m a");
+  return `${startTime}-${endTime}`;
+}
+
+export function getDayRemaing(startDate) {
+  if (!startDate ) return;
+  const start = parseISO(startDate);
+  const currentDate=new Date();
+  if(currentDate>start){
+    return "Ended";
+  }
+return formatDistanceToNow(start,{addSuffix:true}); 
+
 }

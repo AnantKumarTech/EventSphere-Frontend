@@ -1,4 +1,4 @@
-import { formatEventDate, formatPrice } from "@/lib/utils";
+import { formatEventDate, formatEventTimeRange, formatPrice, getDayRemaing } from "@/lib/utils";
 import axios from "axios";
 import {
   Bookmark,
@@ -15,6 +15,19 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
+import { toast } from "sonner";
+
+  function handleShare() {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Event link copied to clipboard!");
+  }
+
+const Modes = {
+  "in-person": "In-Person Gathering",
+  online: "Online Conclave",
+  hybird: "Hybird Format",
+};
+
 
 export default function EventDetailsPage() {
   const { id } = useParams();
@@ -74,7 +87,7 @@ export default function EventDetailsPage() {
 
         <div className="flex items-center gap-2">
           <button
-            
+            onClick={handleShare}
             type="button"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#DDD9CE] bg-white hover:bg-stone-50 text-xs font-medium text-stone-700 transition-all cursor-pointer"
           >
@@ -115,7 +128,7 @@ export default function EventDetailsPage() {
                 : event.format === "in-person"
                   ? "In-Person Gathering"
                   : "Hybird Format"} */}
-      
+              {Modes[event.format]}
             </span>
             {event.featured && (
               <span className="inline-flex items-center gap-1.5 whitespace-nowrap bg-[#FFF3E0] text-[#B73E00] border border-[#FFE0B2] text-xs px-2.5 py-1 rounded-full font-medium">
@@ -143,7 +156,9 @@ export default function EventDetailsPage() {
               <span>
                 <Clock />
               </span>{" "}
-             
+              {formatEventTimeRange(event.startDate, event.endDate)}
+              {/* startDate : "2027-02-20T13:00:00.000Z" */}
+              {/*/ enddATE 2027-02-20T17:30:00.000Z */}
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
@@ -386,7 +401,7 @@ export default function EventDetailsPage() {
 
               <div className="text-right">
                 <span className="text-xs font-semibold px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">
-               
+                  {getDayRemaing(event.startDate)}
                 </span>
               </div>
             </div>
