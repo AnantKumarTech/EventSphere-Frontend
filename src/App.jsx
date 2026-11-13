@@ -5,6 +5,7 @@ import NotFound from "./component/NotFound";
 import Footer from "./component/Footer";
 import Home from "./pages/Home";
 import { useEffect } from "react";
+import EventDetailsPage from "./pages/EventDetailsPage";
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -27,6 +28,7 @@ function App() {
 
           {/* Handle invalid routes */}
           <Route path="*" element={<NotFound />} />
+          <Route path="/events/:id" element={<EventDetailsPage />} />
         </Routes>
       </main>
 

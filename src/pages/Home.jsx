@@ -295,8 +295,13 @@ function Home() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trendingEvents.map((e) => {
-              return <EventCard key={e._id} event={e} />;
+            {trendingEvents.map((e, i) => {
+              return (
+                <EventCard
+                  key={e._id || e.id || e.slug || `${e.title || "event"}-${i}`}
+                  event={e}
+                />
+              );
             })}
           </div>
         )}
@@ -314,7 +319,7 @@ function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {HUB_CITIES.map((e,i) => {
+          {HUB_CITIES.map((e) => {
             return (
               <Link
                 key={e.name}
@@ -323,7 +328,7 @@ function Home() {
               >
                 <img
                   src={e.img}
-                  alt="Bengaluru"
+                  alt={e.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-75"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -333,7 +338,7 @@ function Home() {
                     <span>{e.name}</span>
                   </div>
                   <p className="text-xs text-stone-300 font-medium mt-0.5">
-                    ${e.label}
+                    {e.label}
                   </p>
                 </div>
               </Link>
