@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Briefcase, ChevronRight, Compass, Cpu, Flame, GraduationCap, MapPin, Music, Palette, Sparkles, Tag, Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import axios from "axios";
 import EventCard from "@/component/EventCard";
 import Skeleton from "@/component/Skeleton";
+import api from "@/lib/axios";
 
 function getCategoryIcon(category) {
   const icon = category?.icon || category?.name || "";
@@ -107,28 +107,26 @@ function Home() {
      async function loadHomePage() {
        setIsLoading(true);
        try {
-         let {
-           data: { data },
-         } = await axios.get(
-           "https://eventsphere-server-mfdb.onrender.com/api/events/featured",
+         let data = await api.get(
+           "/api/events/featured",
          );
          setFeatureEvent(data);
        } catch (error) {}
 
        try {
-         let {
-           data: { data },
-         } = await axios.get(
-           "https://eventsphere-server-mfdb.onrender.com/api/categories",
+         let 
+           data
+          = await api.get(
+           "/api/categories",
          );
          setCatergoies(data);
        } catch (error) {}
 
        try {
-         let {
-           data: { data },
-         } = await axios.get(
-           "https://eventsphere-server-mfdb.onrender.com/api/events?limit=8&sort=startDate&order=asc",
+         let 
+           data
+          = await api.get(
+           "/api/events?limit=8&sort=startDate&order=asc",
          );
          setTrendingEvents(data);
        } catch (error) {}
