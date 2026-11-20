@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import EventDetailsPage from "./pages/EventDetailsPage";
 import { Toaster } from "sonner";
 import FavoritesPage from "./component/FavoritesPage";
+import ExplorePage from "./pages/ExplorePage";
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -31,6 +32,7 @@ function App() {
           {/* Handle invalid routes */}
           <Route path="*" element={<NotFound />} />
           <Route path="/events/:id" element={<EventDetailsPage />} />
+          <Route path="/explore" element={<ExplorePage />} />
         </Routes>
       </main>
 
