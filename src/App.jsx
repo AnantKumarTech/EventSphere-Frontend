@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import { useEffect } from "react";
 import EventDetailsPage from "./pages/EventDetailsPage";
 import { Toaster } from "sonner";
+import FavoritesPage from "./component/FavoritesPage";
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -25,6 +26,7 @@ function App() {
       <main className="flex-1 w-full">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
 
           {/* Handle invalid routes */}
           <Route path="*" element={<NotFound />} />

@@ -6,6 +6,7 @@ import {
   formatPrice,
   getDayRemaing,
 } from "@/lib/utils";
+import { toggleFavorites } from "@/store/slices/favoriteSlice";
 import {
   Bookmark,
   Calendar,
@@ -20,10 +21,12 @@ import {
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router";
 import { toast } from "sonner";
 
 function handleShare() {
+
   navigator.clipboard.writeText(window.location.href);
   toast.success("Event link copied to clipboard!");
 }
@@ -36,11 +39,18 @@ const Modes = {
 
 export default function EventDetailsPage() {
   const { id } = useParams();
+  const dispatch = useDispatch();
 
   //https://eventsphere-server-mfdb.onrender.com/api/events/:slugOrId
-  console.log(id);
+
   const [isLoading, setIsLoading] = useState(false);
   const [event, setEvent] = useState([]);
+  const favorite = useSelector((state) => state.favorite.items);
+  const isFavorite = useSelector((state) =>
+    state.favorite.items.some(
+      (e) => (e.id || e._id) === (event.id || event._id),
+    ),
+  );
   const [reviews, setReviews] = useState([]);
   //   const [featuredEvents, setFeaturedEvents] = useState([]);
   //   const [trendingEvents, setTrendingEvents] = useState([]);
@@ -62,7 +72,6 @@ export default function EventDetailsPage() {
         );
   
         setReviews(reviewss);
-        console.log(reviewss);
       } catch (error) {}
 
       setIsLoading(false);
@@ -112,10 +121,25 @@ export default function EventDetailsPage() {
 
           <button
             type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              dispatch(toggleFavorites(event));
+              if (isFavorite) {
+                toast.info(`Removed "${event?.title}" from saved events`);
+              } else {
+                toast.success(`Saved "${event?.title}" to your collection!`);
+              }
+            }}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
           >
             <span>
-              <Bookmark className="w-4 h-4" />
+              <Bookmark
+                className={`w-4 h-4 transition-colors ${
+                  isFavorite
+                    ? "fill-[#E65100] text-[#E65100]"
+                    : "text-stone-600"
+                }`}
+              />
             </span>
             <span>Save</span>
           </button>
@@ -274,7 +298,7 @@ export default function EventDetailsPage() {
           </section>
 
           {/* Reviews section */}
-        
+
           <EventReviewSection
             reviews={reviews}
             averageRating={event.averageRating}

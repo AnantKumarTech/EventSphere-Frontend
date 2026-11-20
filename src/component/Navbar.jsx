@@ -10,9 +10,11 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 function Navbar() {
   const [hamburger, sethamburger] = useState(false);
+ const favorite = useSelector((state) => state.favorite.items);
 
   return (
     <>
@@ -57,6 +59,11 @@ function Navbar() {
               >
                 <Bookmark className="w-4 h-4" />
                 <span>Saved</span>
+                {favorite.length > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-orange-100 text-[#E65100] text-[11px] font-bold flex items-center justify-center">
+                    {favorite.length}
+                  </span>
+                )}
               </Link>
 
               <Link
