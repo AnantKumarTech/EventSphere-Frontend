@@ -107,7 +107,7 @@ function Home() {
      async function loadHomePage() {
        setIsLoading(true);
        try {
-         let data = await api.get(
+         let {data} = await api.get(
            "/api/events/featured",
          );
          setFeatureEvent(data);
@@ -115,7 +115,7 @@ function Home() {
 
        try {
          let 
-           data
+           {data}
           = await api.get(
            "/api/categories",
          );
@@ -124,7 +124,7 @@ function Home() {
 
        try {
          let 
-           data
+           {data}
           = await api.get(
            "/api/events?limit=8&sort=startDate&order=asc",
          );

@@ -4,25 +4,55 @@ import api from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
+import { useInView } from "react-intersection-observer"
 
 export default function ExplorePage() {
-  const [event, setEvent] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  async function fetchEvent() {
-    setIsLoading(true);
+    const { ref: observer, inView } = useInView();
+  const [events, setEvent] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isMoreLoading, setIsMoreLoading] = useState(false);
+    const [pagination, setPagination] = useState({
+    page: 1,
+    total: 0,
+    hasMore: false,
+  });
+
+  async function fetchEvent(page=1,append) {
+    if (page==1){
+   setIsLoading(true);
+    }
+    else{
+setIsMoreLoading(true);
+    } 
     try {
-      const data = await api.get("/api/events");
-      setEvent(data);
+      const { data: event, pagination } = await api.get(
+        `/api/events?page=${page}`,
+      );
+     if (append) {
+        setEvent((prev) => [...prev, ...event]);
+      } else {
+        setEvent(event);
+      }
+      setPagination(pagination);
     } catch (error) {
       toast.error(error.response?.data?.message || "Unable to load events.");
     } finally {
       setIsLoading(false);
+      setIsMoreLoading(false);
     }
   }
   useEffect(() => {
-    fetchEvent();
+    fetchEvent(1,true);
   }, []);
-  
+  useEffect(()=>{
+  if (inView && pagination.hasMore && !isLoading && !isMoreLoading) {
+    let timer = setTimeout(() => {
+      fetchEvent(pagination.page + 1, true);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }
+  },[inView])
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-20">
       {/* Header */}
@@ -269,11 +299,20 @@ export default function ExplorePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {event.map((e) => (
+          {events.map((e) => (
             <EventCard key={e.id || e._id} event={e} />
           ))}
         </div>
       )}
+
+      <div ref={observer} className="py-6 flex justify-center ">
+        {pagination.hasMore && (
+          <div className="flex items-center gap-2 text-xs text-stone-500">
+            <span className="w-4 h-4 border-2 border-[#E65100] border-t-transparent rounded-full animate-spin" />
+            <span>Unfolding more community gatherings...</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -60,14 +60,14 @@ export default function EventDetailsPage() {
       setIsLoading(true);
       try {
         let 
-          data = await api.get(
+          {data} = await api.get(
           `/api/events/${id}`,
         );
 
         setEvent(data);
 
         let 
-          reviewss = await api.get(
+          {reviewss} = await api.get(
           `/api/events/${data.id || data._id}/reviews`,
         );
   
