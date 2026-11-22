@@ -2,36 +2,36 @@ import EventCard from "@/component/EventCard";
 import Skeleton from "@/component/Skeleton";
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
 import { toast } from "sonner";
-import { useInView } from "react-intersection-observer"
+import { useInView } from "react-intersection-observer";
 import EventFilterBar from "@/component/EventFilterBar";
 import { useSelector } from "react-redux";
 
 export default function ExplorePage() {
   const filters = useSelector((state) => state.filters);
-    const { ref: observer, inView } = useInView();
+
+  const { ref: observer, inView } = useInView();
   const [events, setEvent] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isMoreLoading, setIsMoreLoading] = useState(false);
-    const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState({
     page: 1,
     total: 0,
     hasMore: false,
   });
 
-  async function fetchEvent(page=1,append) {
-    if (page==1){
-   setIsLoading(true);
+  async function fetchEvent(page = 1, append) {
+    if (page == 1) {
+      setIsLoading(true);
+    } else {
+      setIsMoreLoading(true);
     }
-    else{
-setIsMoreLoading(true);
-    } 
+
     try {
       const { data: event, pagination } = await api.get(
         `/api/events?page=${page}&format=${filters.format}`,
       );
-     if (append) {
+      if (append) {
         setEvent((prev) => [...prev, ...event]);
       } else {
         setEvent(event);
@@ -47,15 +47,16 @@ setIsMoreLoading(true);
   useEffect(() => {
     fetchEvent(1, false);
   }, [filters.format]);
-  useEffect(()=>{
-  if (inView && pagination.hasMore && !isLoading && !isMoreLoading) {
-    let timer = setTimeout(() => {
-      fetchEvent(pagination.page + 1, true);
-    }, 200);
+  useEffect(() => {
+    if (inView && pagination.hasMore && !isLoading && !isMoreLoading) {
+      let timer = setTimeout(() => {
+        fetchEvent(pagination.page + 1, true);
+      }, 200);
 
-    return () => clearTimeout(timer);
-  }
-  },[inView])
+      return () => clearTimeout(timer);
+    }
+  }, [inView]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-20">
       {/* Header */}
@@ -70,14 +71,14 @@ setIsMoreLoading(true);
       </div>
 
       {/* Filter and Search Bar */}
-    <EventFilterBar/>
-     
+      <EventFilterBar />
 
       {/* Results Header with Active Filter Tags */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-stone-500 pt-2 border-b border-[#EBE8DF] pb-3">
         <div className="flex items-center gap-2 flex-wrap">
           <span>
-            Showing <strong className="text-stone-800">{events.length}</strong> events of {pagination.total}
+            Showing <strong className="text-stone-800">{events.length}</strong>{" "}
+            events of {pagination.total}
           </span>
 
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-50 text-[#C2410C] border border-orange-200">

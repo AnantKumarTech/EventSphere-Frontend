@@ -59,20 +59,28 @@ export default function EventDetailsPage() {
     async function fetchEvent() {
       setIsLoading(true);
       try {
-        let 
-          {data} = await api.get(
-          `/api/events/${id}`,
-        );
+        const eventResponse = await api.get(`/api/events/${id}`);
+        const eventData =
+          eventResponse?.data && !Array.isArray(eventResponse.data)
+            ? eventResponse.data
+            : eventResponse;
 
-        setEvent(data);
+        setEvent(eventData);
 
-        let 
-          {reviewss} = await api.get(
-          `/api/events/${data.id || data._id}/reviews`,
+        const reviewsResponse = await api.get(
+          `/api/events/${eventData.id || eventData._id}/reviews`,
         );
-  
-        setReviews(reviewss);
-      } catch (error) {}
+        const reviewData =
+          reviewsResponse?.reviews ??
+          reviewsResponse?.data?.reviews ??
+          reviewsResponse?.data ??
+          reviewsResponse;
+
+        setReviews(Array.isArray(reviewData) ? reviewData : []);
+      } catch (error) {
+        setEvent({});
+        setReviews([]);
+      }
 
       setIsLoading(false);
     }

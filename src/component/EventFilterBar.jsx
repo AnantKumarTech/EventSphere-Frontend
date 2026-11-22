@@ -1,10 +1,13 @@
-import { setFormat } from '@/store/slices/filterSlice';
-import React from 'react'
-import { useDispatch} from 'react-redux';
+import { setFormat } from "@/store/slices/filterSlice";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router";
 
 function EventFilterBar() {
-  const dispach=useDispatch();
-  
+  const dispach = useDispatch();
+ const filter = useSelector((state) => state.filters);
+  const [searchParams, setSearchParam] = useSearchParams();
+  const activeFormat=searchParams.get("format")|| filter.format;
   return (
     <div className="space-y-4">
       {/* Top Search & Primary Filters Row */}
@@ -151,16 +154,22 @@ function EventFilterBar() {
             <button
               key={i}
               type="button"
-              onClick={()=>{
+              onClick={() => {
                 dispach(setFormat(f));
+                const params = new URLSearchParams();
+                if (f) {
+                  params.set("format", f);
+                } else {
+                  params.delete("format");
+                }
+
+                setSearchParam(params);
               }}
-              className="px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer bg-stone-800 text-white border-stone-800"
+              className={`px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer  ${activeFormat === f ? "bg-stone-800 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
             >
               {f === "" ? "All Formats" : f}
             </button>
           ))}
-
-        
         </div>
 
         <div className="flex items-center gap-2">
@@ -189,4 +198,4 @@ function EventFilterBar() {
   );
 }
 
-export default EventFilterBar
+export default EventFilterBar;

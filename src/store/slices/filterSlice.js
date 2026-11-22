@@ -12,9 +12,12 @@ const filterSlice = createSlice({
     setFormat(state, action) {
       state.format = action.payload;
     },
+    setCategory(state, action) {
+      state.category = action.payload;
+    },
   },
 });
 
-export const { setFormat } = filterSlice.actions;
+export const { setFormat, setCategory } = filterSlice.actions;
 
 export default filterSlice.reducer;

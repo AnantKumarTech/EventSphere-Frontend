@@ -1,8 +1,13 @@
-import { formatDistance, formatDistanceToNow, parseISO } from "date-fns";
+import { formatDistanceToNow, parseISO, isValid } from "date-fns";
 import { Star } from "lucide-react";
 
-export default function EventReviewSection({ reviews, averageRating, numReviews }) {
-    const isAuthenticated = false;
+export default function EventReviewSection({
+  reviews = [],
+  averageRating = 0,
+  numReviews = 0,
+}) {
+  const isAuthenticated = false;
+  const reviewList = Array.isArray(reviews) ? reviews : [];
   return (
     <section className="bg-white rounded-3xl border border-[#EBE8DF] p-6 sm:p-8 shadow-subtle space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#F2EFE8]">
@@ -19,7 +24,7 @@ export default function EventReviewSection({ reviews, averageRating, numReviews 
           <div className="flex items-center gap-1 text-[#E65100]">
             <Star className="w-5 h-5 fill-[#E65100]" />
             <span className="text-lg font-black text-stone-900">
-              {averageRating > 0 ? averageRating : "New"}
+              {Number(averageRating) > 0 ? averageRating : "New"}
             </span>
           </div>
           <span className="text-xs text-stone-400 font-medium">
@@ -84,7 +89,9 @@ export default function EventReviewSection({ reviews, averageRating, numReviews 
 
       {/* Reviews List */}
       <div className="space-y-4">
-        {reviews.map((re) => {
+        {reviewList.map((re) => {
+          const createdAt = re.createdAt ? parseISO(re.createdAt) : null;
+          const rating = Number(re.rating) || 0;
           return (
             <div
               key={re.id || re._id}
@@ -102,9 +109,9 @@ export default function EventReviewSection({ reviews, averageRating, numReviews 
                       {re.user?.name}
                     </p>
                     <p className="text-[10px] text-stone-400 mt-0.5">
-                      {formatDistanceToNow(parseISO(re.createdAt), {
-                        addSuffix: true,
-                      })}
+                      {createdAt && isValid(createdAt)
+                        ? formatDistanceToNow(createdAt, { addSuffix: true })
+                        : "Recently"}
                     </p>
                   </div>
                 </div>
@@ -118,16 +125,18 @@ export default function EventReviewSection({ reviews, averageRating, numReviews 
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className="text-amber-400 fill-amber-300 w-4 h-3"
+                      className={`w-4 h-3 ${
+                        i < rating
+                          ? "text-amber-400 fill-amber-300"
+                          : "text-stone-300"
+                      }`}
                     />
                   ))}
                 </div>
               </div>
 
               <p className="text-xs text-stone-700 leading-relaxed pl-9">
-                Exceptional architectural discussions on React Server
-                Components! The live demos and roundtable questions brought rare
-                clarity to compiler optimizations.
+                {re.comment || re.review || "No written review provided."}
               </p>
             </div>
           );

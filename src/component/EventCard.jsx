@@ -12,8 +12,8 @@ const favorite = useSelector((state) => state.favorite.items);
      (e) => (e.id || e._id) === (event.id || event._id),
    ),
  );
- console.log(isFavorite);
-console.log(favorite.length);
+//  console.log(isFavorite);
+// console.log(favorite.length);
   const {
     city,
     currency,
