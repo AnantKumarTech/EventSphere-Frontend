@@ -4,15 +4,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router";
 
 function EventFilterBar() {
+  // Redux dispatch
   const dispach = useDispatch();
+
+  // Redux filters
   const filter = useSelector((state) => state.filters);
 
+  // URL parameters
   const [searchParams, setSearchParam] = useSearchParams();
+
+  // Active format
   const activeFormat = searchParams.get("format") || filter.format;
-const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
+
+  // Active pricing
+  const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
+
+  // Pricing handler
   function handleIsPaid(entry) {
     dispach(setIsPaid(entry));
+
+    // Copy parameters
     const params = new URLSearchParams(searchParams);
+
     if (entry === "") {
       params.delete("isPaid");
     } else if (typeof entry === "boolean") {
@@ -21,12 +34,15 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
       params.delete("isPaid");
     }
 
+    // Update URL
     setSearchParam(params);
   }
+
   return (
     <div className="space-y-4">
-      {/* Top Search & Primary Filters Row */}
+      {/* Search filters */}
       <div className="bg-white rounded-2xl border border-[#EBE8DF] p-3 shadow-subtle flex flex-col md:flex-row items-stretch md:items-center gap-3">
+        {/* Search input */}
         <div className="relative flex-1">
           <span className="text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 text-xs">
             🔍
@@ -41,6 +57,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </form>
         </div>
 
+        {/* Location filter */}
         <div className="relative min-w-37.5">
           <span className="text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs">
             📍
@@ -62,6 +79,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </span>
         </div>
 
+        {/* Date filter */}
         <div className="relative">
           <button
             type="button"
@@ -73,6 +91,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </button>
         </div>
 
+        {/* Sorting options */}
         <div className="relative min-w-35">
           <select
             name="sort"
@@ -89,6 +108,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </span>
         </div>
 
+        {/* Reset button */}
         <button
           type="button"
           className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors shrink-0 cursor-pointer"
@@ -98,8 +118,9 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
         </button>
       </div>
 
-      {/* Categories horizontal pill bar */}
+      {/* Category filters */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {/* All categories */}
         <button
           type="button"
           className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-[#1a1a1a] text-white shadow-sm"
@@ -110,6 +131,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </span>
         </button>
 
+        {/* Technology category */}
         <button
           type="button"
           className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
@@ -120,6 +142,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </span>
         </button>
 
+        {/* Music category */}
         <button
           type="button"
           className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
@@ -130,6 +153,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </span>
         </button>
 
+        {/* Startup category */}
         <button
           type="button"
           className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
@@ -140,6 +164,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </span>
         </button>
 
+        {/* Fitness category */}
         <button
           type="button"
           className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
@@ -150,6 +175,7 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           </span>
         </button>
 
+        {/* Arts category */}
         <button
           type="button"
           className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
@@ -161,8 +187,9 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
         </button>
       </div>
 
-      {/* Format & Pricing Pills */}
+      {/* Format and pricing */}
       <div className="flex items-center justify-between text-xs text-stone-500 flex-wrap gap-2 pt-1">
+        {/* Format selection */}
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-stone-700">Format:</span>
           {["", "in-person", "online", "hybrid"].map((f, i) => (
@@ -171,13 +198,17 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
               type="button"
               onClick={() => {
                 dispach(setFormat(f));
+
+                // Copy parameters
                 const params = new URLSearchParams(searchParams);
+
                 if (f) {
                   params.set("format", f);
                 } else {
                   params.delete("format");
                 }
 
+                // Update URL
                 setSearchParam(params);
               }}
               className={`px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer  ${activeFormat === f ? "bg-stone-800 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
@@ -187,23 +218,33 @@ const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
           ))}
         </div>
 
+        {/* Pricing selection */}
         <div className="flex items-center gap-2">
           <span className="font-semibold text-stone-700">Admission:</span>
-      <button onClick={() => handleIsPaid("")}
+
+          {/* All admission */}
+          <button
+            onClick={() => handleIsPaid("")}
             type="button"
             className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${activeIsPaid === "" ? "bg-stone-800 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
           >
             All
           </button>
-        <button onClick={() => handleIsPaid(false)}
+
+          {/* Free admission */}
+          <button
+            onClick={() => handleIsPaid(false)}
             type="button"
             className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${activeIsPaid === "false" ? "bg-green-700 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
           >
             Free
           </button>
-         <button onClick={() => handleIsPaid(true)}
+
+          {/* Paid admission */}
+          <button
+            onClick={() => handleIsPaid(true)}
             type="button"
-             className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${activeIsPaid === "true" ? "bg-stone-800 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${activeIsPaid === "true" ? "bg-stone-800 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
           >
             Paid
           </button>
