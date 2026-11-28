@@ -22,7 +22,11 @@ function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3 h-20">
             {/* Logo + Brand Name */}
-            <div className="flex items-center gap-2 shrink-0">
+            <Link
+              to="/"
+              className="flex items-center gap-2 shrink-0"
+              aria-label="EventSphere home"
+            >
               <img
                 src="/logo.png"
                 alt="EventSphere Logo"
@@ -33,7 +37,7 @@ function Navbar() {
                 <span className="text-red-500">Event</span>
                 <span className="text-gray-900">Sphere.</span>
               </h1>
-            </div>
+            </Link>
 
             {/* Navigation Links - Desktop */}
             <div className="hidden md:flex items-center gap-1">

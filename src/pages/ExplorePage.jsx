@@ -1,15 +1,20 @@
 import EventCard from "@/component/EventCard";
 import Skeleton from "@/component/Skeleton";
 import api from "@/lib/axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useInView } from "react-intersection-observer";
 import EventFilterBar from "@/component/EventFilterBar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router";
+import { setFormat, setIsPaid } from "@/store/slices/filterSlice";
 
 export default function ExplorePage() {
-  const filters = useSelector((state) => state.filters);
+  const activeRequestId = useRef(0);
+const [searchParams] = useSearchParams();
 
+  const filters = useSelector((state) => state.filters);
+  const dispatch = useDispatch();
   const { ref: observer, inView } = useInView();
   const [events, setEvent] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,16 +26,30 @@ export default function ExplorePage() {
   });
 
   async function fetchEvent(page = 1, append) {
-    if (page == 1) {
+    const thisRequestId = ++activeRequestId.current;
+
+    if (page === 1) {
       setIsLoading(true);
     } else {
       setIsMoreLoading(true);
     }
+    const params = new URLSearchParams();
+    params.set("page", String(page));
+    if (filters.format) {
+      params.set("format", filters.format);
+    }
+    if (filters.isPaid !== "") {
+      params.set("isPaid", String(filters.isPaid));
+    }
 
     try {
       const { data: event, pagination } = await api.get(
-        `/api/events?page=${page}&format=${filters.format}`,
+        `/api/events?${params.toString()}`,
       );
+      if (thisRequestId !== activeRequestId.current) {
+        return;
+      }
+
       if (append) {
         setEvent((prev) => [...prev, ...event]);
       } else {
@@ -38,15 +57,37 @@ export default function ExplorePage() {
       }
       setPagination(pagination);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Unable to load events.");
+      if (thisRequestId === activeRequestId.current) {
+        toast.error(error?.response?.data?.message || "Unable to load events.");
+      }
     } finally {
-      setIsLoading(false);
-      setIsMoreLoading(false);
+      if (thisRequestId === activeRequestId.current) {
+        setIsLoading(false);
+        setIsMoreLoading(false);
+      }
     }
   }
   useEffect(() => {
+   const urlFormat = searchParams.get("format");
+   const urlIsPaid = searchParams.get("isPaid");
+
+   if (urlFormat) {
+     dispatch(setFormat(urlFormat));
+   } else {
+     dispatch(setFormat(""));
+   }
+
+   if (urlIsPaid !== "" && urlIsPaid !== null) {
+     console.log(urlIsPaid);
+     dispatch(setIsPaid(urlIsPaid === "true" ? true : false));
+   } else {
+     dispatch(setIsPaid(""));
+   }
+  }, [dispatch, searchParams]);
+
+  useEffect(() => {
     fetchEvent(1, false);
-  }, [filters.format]);
+  }, [filters.format, filters.isPaid]);
   useEffect(() => {
     if (inView && pagination.hasMore && !isLoading && !isMoreLoading) {
       let timer = setTimeout(() => {

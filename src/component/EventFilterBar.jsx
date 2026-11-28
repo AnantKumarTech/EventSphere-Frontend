@@ -1,13 +1,28 @@
-import { setFormat } from "@/store/slices/filterSlice";
-import React, { useEffect } from "react";
+import { setFormat, setIsPaid } from "@/store/slices/filterSlice";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router";
 
 function EventFilterBar() {
   const dispach = useDispatch();
- const filter = useSelector((state) => state.filters);
+  const filter = useSelector((state) => state.filters);
+
   const [searchParams, setSearchParam] = useSearchParams();
-  const activeFormat=searchParams.get("format")|| filter.format;
+  const activeFormat = searchParams.get("format") || filter.format;
+const activeIsPaid = searchParams.get("isPaid") ?? filter.isPaid;
+  function handleIsPaid(entry) {
+    dispach(setIsPaid(entry));
+    const params = new URLSearchParams(searchParams);
+    if (entry === "") {
+      params.delete("isPaid");
+    } else if (typeof entry === "boolean") {
+      params.set("isPaid", String(entry));
+    } else {
+      params.delete("isPaid");
+    }
+
+    setSearchParam(params);
+  }
   return (
     <div className="space-y-4">
       {/* Top Search & Primary Filters Row */}
@@ -156,7 +171,7 @@ function EventFilterBar() {
               type="button"
               onClick={() => {
                 dispach(setFormat(f));
-                const params = new URLSearchParams();
+                const params = new URLSearchParams(searchParams);
                 if (f) {
                   params.set("format", f);
                 } else {
@@ -174,21 +189,21 @@ function EventFilterBar() {
 
         <div className="flex items-center gap-2">
           <span className="font-semibold text-stone-700">Admission:</span>
-          <button
+      <button onClick={() => handleIsPaid("")}
             type="button"
-            className="px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer bg-stone-800 text-white border-stone-800"
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${activeIsPaid === "" ? "bg-stone-800 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
           >
             All
           </button>
-          <button
+        <button onClick={() => handleIsPaid(false)}
             type="button"
-            className="px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${activeIsPaid === "false" ? "bg-green-700 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
           >
             Free
           </button>
-          <button
+         <button onClick={() => handleIsPaid(true)}
             type="button"
-            className="px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+             className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${activeIsPaid === "true" ? "bg-stone-800 text-white border-stone-800" : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"}`}
           >
             Paid
           </button>
